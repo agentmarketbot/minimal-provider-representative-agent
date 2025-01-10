@@ -10,10 +10,11 @@ This service consists of two main components:
 ## Features
 
 - Automatic market scanning and proposal creation
-- AI-powered code modifications using Aider for intelligent code changes
+- AI-powered code modifications using Aider (currently the only supported agent) for intelligent code changes
 - GitHub integration for repository forking and pull request creation
 - Caching system for agent responses to improve performance
 - Configurable bid amounts and API settings
+- Simplified configuration with focus on essential integrations
 
 ## Prerequisites
 
@@ -104,8 +105,8 @@ python main.py
 
 The service can be configured through environment variables in the `.env` file:
 
-- `AGENT_TYPE`: The agent to use (currently only 'aider' is supported)
-- `OPENAI_API_KEY`: Your OpenAI API key for AI operations
+- `AGENT_TYPE`: Must be set to 'aider' as it's currently the only supported agent implementation
+- `OPENAI_API_KEY`: Your OpenAI API key for AI operations (required for Aider)
 - `GITHUB_PAT`: GitHub Personal Access Token for repository operations
 - `GITHUB_USERNAME`: Your GitHub username for commits
 - `GITHUB_EMAIL`: Your GitHub email for commits
