@@ -17,13 +17,17 @@ def find_github_repo_url(text: str) -> Optional[str]:
     return None
 
 
-def clone_repository(repo_url: str, target_dir: str) -> None:
+def clone_repository(repo_url: str, target_dir: str, branch: str = None) -> None:
     if os.path.exists(target_dir):
         shutil.rmtree(target_dir)
 
     os.makedirs(target_dir)
-    git.Repo.clone_from(repo_url, target_dir)
-    logger.info(f"Cloned repository from {repo_url} to {target_dir}")
+    if branch:
+        git.Repo.clone_from(repo_url, target_dir, branch=branch)
+        logger.info(f"Cloned repository from {repo_url} (branch: {branch}) to {target_dir}")
+    else:
+        git.Repo.clone_from(repo_url, target_dir)
+        logger.info(f"Cloned repository from {repo_url} to {target_dir}")
 
 
 def fork_repo(github_url: str, github_token: str) -> str:

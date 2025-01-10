@@ -89,10 +89,10 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
 
     try:
         cleaned = openai.chat.completions.create(
-            model=ModelName.gpt_4o,
+            model="o1-mini",
             messages=[
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": (
                         "You are a technical assistant that extracts and organizes key "
                         "improvements from code reviews. If there are no new relevant technical "
@@ -116,6 +116,31 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
     except Exception as e:
         logger.error(f"Failed to clean response with GPT-4: {e}")
         return response
+
+
+def _get_pr_diff(pr_url: str) -> Optional[str]:
+    try:
+        diff_url = f"{pr_url}.diff"
+        response = httpx.get(diff_url, timeout=TIMEOUT)
+        if response.status_code == 200:
+            diff_content = response.text
+            diff_files = openai.chat.completions.create(
+                model=ModelName.gpt_4o,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a technical assistant that processes PR diffs. Extract and list all modified files and their changes in a structured format. For each file include: filename and the actual changes made (additions/deletions). Do not summarize or interpret the changes."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Extract the modified files and their changes from this diff:\n\n{diff_content}"
+                    }
+                ]
+            )
+            return diff_files.choices[0].message.content.strip()
+    except Exception as e:
+        logger.warning(f"Failed to fetch PR diff: {e}")
+    return None
 
 
 def _solve_instance(
@@ -142,7 +167,6 @@ def _solve_instance(
             if pr_link:
                 pr_url = pr_link.group(0)
                 files_url = f"{pr_url}/files"
-                repo_url = pr_url.split("/pull/")[0]
 
                 try:
                     pr_response = httpx.get(pr_url, timeout=TIMEOUT)
@@ -153,19 +177,27 @@ def _solve_instance(
                         )
                         if issue_link:
                             messages += f"\n\nRelated issue: {issue_link.group(0)}"
+                        
+                        fork_info_match = re.search(r'<span title="agentmarketbot/([^:]+):([^"]+)"', pr_content)
+                        
+                        if fork_info_match:
+                            repo_name = fork_info_match.group(1)
+                            branch_name = fork_info_match.group(2)
+                            fork_repo_url = f"https://github.com/agentmarketbot/{repo_name}"
+                            repo_info = {"url": fork_repo_url, "branch": branch_name}
+                        else:
+                            repo_info = None
+                            logger.warning("Could not extract fork repository information")
                 except Exception as e:
                     logger.warning(f"Failed to fetch PR content: {e}")
-
-                messages += (
-                    f"\n\nAdditional links:\nFiles view: {files_url}\nRepository: {repo_url}"
-                )
-
-        solver_command_parts.append(f"This is the conversation history:\n{messages}")
+                    repo_info = None
 
     solver_command = "\n\n\n".join(solver_command_parts)
+    solver_command += f"\nFiles view: {files_url}"
+    solver_command += f"\nIssue: {issue_link.group(0)}"
 
     try:
-        response = modify_repo_with_aider(ModelName.gpt_4o, solver_command)
+        response = modify_repo_with_aider(ModelName.gpt_4o, solver_command, repo_info)
         if not response:
             logger.warning("Received empty response from Aider")
             return None

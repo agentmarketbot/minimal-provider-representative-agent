@@ -18,7 +18,7 @@ from src.utils.git import clone_repository, find_github_repo_url
 from .prompt_cache import PromptCache
 
 
-def modify_repo_with_aider(model_name, solver_command, test_command=None) -> str:
+def modify_repo_with_aider(model_name, solver_command, repo_info=None) -> str:
     io_instance = InputOutput(yes=True)
     model = Model("sonnet")
     prompt_cache = PromptCache()
@@ -39,12 +39,15 @@ def modify_repo_with_aider(model_name, solver_command, test_command=None) -> str
 
     try:
         with redirect_stdout(output_buffer), redirect_stderr(output_buffer):
-            repo_url = find_github_repo_url(solver_command)
-            if repo_url:
-                logger.info(f"Found GitHub repository URL: {repo_url}")
-                clone_repository(repo_url, temp_dir)
-                logger.info(f"Cloned repository to {temp_dir}")
-
+            if repo_info and isinstance(repo_info, dict):
+                repo_url = repo_info.get("url")
+                branch = repo_info.get("branch")
+                if repo_url and branch:
+                    logger.info(f"Found GitHub repository URL: {repo_url} and branch: {branch}")
+                    clone_repository(repo_url, temp_dir, branch)
+                    logger.info(f"Cloned repository branch {branch} to {temp_dir}")
+                else:
+                    logger.warning("Invalid repo_info: missing url or branch")
             os.chdir(temp_dir)
             logger.info(f"Changed working directory to: {temp_dir}")
 
