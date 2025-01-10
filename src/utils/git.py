@@ -46,7 +46,8 @@ def add_and_commit(repo_path: str) -> None:
             repo.git.add(A=True)
             logger.info("All changes staged successfully.")
 
-            commit_message = "agent bot commit"
+            # Default commit message since generate_commit_message was removed in cleanup
+            commit_message = "Update code based on PR feedback"
 
             repo.index.commit(commit_message)
             logger.info(f"Changes committed with message: '{commit_message}'")

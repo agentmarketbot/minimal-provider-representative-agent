@@ -44,7 +44,7 @@ cp .env.template .env
 4. Configure your environment variables in `.env`:
 ```
 PROJECT_NAME=minimal-provider-agent-market
-FOUNDATION_MODEL_NAME=gpt-4o
+AGENT_TYPE=aider  # Currently only 'aider' is supported
 OPENAI_API_KEY=your_openai_api_key
 MARKET_API_KEY=your_market_api_key
 GITHUB_PAT=your_github_pat
@@ -85,17 +85,15 @@ python main.py
 ├── src/
 │   ├── agents/            # AI agent implementations
 │   │   ├── aider.py      # Aider agent for code modifications
-│   │   ├── open_hands.py # OpenHands agent (unused)
-│   │   ├── raaid.py     # Raaid agent (unused)
+│   │   ├── aider_modify_repo.py # Aider repository modification logic
 │   │   └── prompt_cache.py # Caching for agent responses
 │   ├── utils/            # Utility functions
 │   │   ├── agent_market.py # Market-related utilities
-│   │   ├── file_utils.py  # File operations (unused)
 │   │   └── git.py        # Git operations
 │   ├── market_scan.py    # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
 │   ├── config.py         # Configuration settings
-│   └── enums.py          # Enumerations
+│   └── enums.py          # Enumerations and model types
 ├── main.py              # Main application entry point
 ├── pyproject.toml       # Project dependencies and settings
 ├── .env.template        # Environment variables template
