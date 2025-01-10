@@ -24,28 +24,27 @@ class InstanceToSolve:
 
 
 def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[InstanceToSolve]:
-    headers = {
-        "x-api-key": settings.market_api_key,
-    }
-    with httpx.Client(timeout=TIMEOUT) as client:
-        instance_endpoint = f"{settings.market_url}/v1/instances/{instance_id}"
-        response = client.get(instance_endpoint, headers=headers)
-        instance = response.json()
+    try:
+        headers = {
+            "x-api-key": settings.market_api_key,
+        }
+        with httpx.Client(timeout=TIMEOUT) as client:
+            instance_endpoint = f"{settings.market_url}/v1/instances/{instance_id}"
+            response = client.get(instance_endpoint, headers=headers)
+            instance = response.json()
 
-        if (
-            not instance.get("status")
-            or instance["status"] != settings.market_resolved_instance_code
-        ):
-            return None
+            if (
+                not instance.get("status")
+                or instance["status"] != settings.market_resolved_instance_code
+            ):
+                return None
 
-    with httpx.Client(timeout=TIMEOUT) as client:
-        chat_endpoint = f"{settings.market_url}/v1/chat/{instance_id}"
-        response = client.get(chat_endpoint, headers=headers)
+        with httpx.Client(timeout=TIMEOUT) as client:
+            chat_endpoint = f"{settings.market_url}/v1/chat/{instance_id}"
+            response = client.get(chat_endpoint, headers=headers)
 
-        try:
             chat = response.json()
             if isinstance(chat, dict) and chat.get("detail"):
-                logger.info(f"Chat API error: {chat['detail']}")
                 return None
 
             if not chat:
@@ -66,9 +65,8 @@ def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[Ins
                 messages_history=messages_history,
                 provider_needs_response=provider_needs_response,
             )
-        except Exception as e:
-            logger.error(f"Error processing chat for instance {instance_id}: {e}")
-            return None
+    except Exception:
+        return None
 
 
 def _clean_response(response: str) -> str:
@@ -168,61 +166,65 @@ def _solve_instance(
 
 
 def get_awarded_proposals(settings: Settings) -> list[dict]:
-    headers = {
-        "x-api-key": settings.market_api_key,
-    }
-    url = f"{settings.market_url}/v1/proposals/"
+    try:
+        headers = {
+            "x-api-key": settings.market_api_key,
+        }
+        url = f"{settings.market_url}/v1/proposals/"
 
-    response = httpx.get(url, headers=headers)
-    response.raise_for_status()
-    all_proposals = response.json()
+        response = httpx.get(url, headers=headers)
+        response.raise_for_status()
+        all_proposals = response.json()
 
-    current_time = datetime.utcnow()
-    one_day_ago = current_time - timedelta(days=1)
+        current_time = datetime.utcnow()
+        one_day_ago = current_time - timedelta(days=1)
 
-    awarded_proposals = [
-        p
-        for p in all_proposals
-        if p["status"] == settings.market_awarded_proposal_code
-        and datetime.fromisoformat(p["creation_date"]) > one_day_ago
-    ]
-    return awarded_proposals
+        awarded_proposals = [
+            p
+            for p in all_proposals
+            if p["status"] == settings.market_awarded_proposal_code
+            and datetime.fromisoformat(p["creation_date"]) > one_day_ago
+        ]
+        return awarded_proposals
+    except Exception:
+        return None
 
 
-def _send_message(instance_id: str, message: str, settings: Settings) -> None:
-    headers = {
-        "x-api-key": settings.market_api_key,
-    }
-    url = f"{settings.market_url}/v1/chat/send-message/{instance_id}"
-    data = {"message": message}
+def _send_message(instance_id: str, message: str, settings: Settings) -> Optional[bool]:
+    try:
+        headers = {
+            "x-api-key": settings.market_api_key,
+        }
+        url = f"{settings.market_url}/v1/chat/send-message/{instance_id}"
+        data = {"message": message}
 
-    response = httpx.post(url, headers=headers, json=data)
-    response.raise_for_status()
+        response = httpx.post(url, headers=headers, json=data)
+        response.raise_for_status()
+        return True
+    except Exception:
+        return None
 
 
 def solve_instances_handler() -> None:
     logger.info("Solve instances handler")
     awarded_proposals = get_awarded_proposals(SETTINGS)
 
+    if not awarded_proposals:
+        return
+
     logger.info(f"Found {len(awarded_proposals)} awarded proposals")
 
     for p in awarded_proposals:
         instance_to_solve = _get_instance_to_solve(p["instance_id"], SETTINGS)
-        try:
-            if not instance_to_solve:
-                continue
+        if not instance_to_solve:
+            continue
 
-            if not instance_to_solve.provider_needs_response:
-                continue
+        if not instance_to_solve.provider_needs_response:
+            continue
 
-            message = _solve_instance(instance_to_solve)
-            if not message:
-                continue
+        message = _solve_instance(instance_to_solve)
+        if not message:
+            continue
 
-            _send_message(
-                instance_to_solve.instance["id"],
-                message,
-                SETTINGS,
-            )
-        except Exception as e:
-            logger.error(f"Error solving instance id {instance_to_solve.instance['id']}: {e}")
+        if _send_message(instance_to_solve.instance["id"], message, SETTINGS) is None:
+            continue
