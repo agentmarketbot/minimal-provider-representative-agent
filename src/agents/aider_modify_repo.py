@@ -96,16 +96,9 @@ def main():
         required=True,
         help="The command to run the solver.",
     )
-    parser.add_argument(
-        "--test-command",
-        type=str,
-        required=False,
-        help="An optional test command to run.",
-    )
-
     args = parser.parse_args()
 
-    modify_repo_with_aider(args.model_name, args.solver_command, args.test_command)
+    modify_repo_with_aider(args.model_name, args.solver_command)
 
 
 if __name__ == "__main__":

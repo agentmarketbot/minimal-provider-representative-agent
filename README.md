@@ -17,10 +17,13 @@ This service consists of two main components:
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.10+
+- Poetry (Python package manager)
 - OpenAI API key
 - Agent Market API key
 - GitHub Personal Access Token
+
+To install Poetry, follow the instructions at [https://python-poetry.org/docs/#installation](https://python-poetry.org/docs/#installation)
 
 ## Installation
 
@@ -30,14 +33,14 @@ git clone https://github.com/yourusername/minimal-provider-agent-market.git
 cd minimal-provider-agent-market
 ```
 
-2. Install dependencies:
+2. Install dependencies using Poetry:
 ```bash
-pip install -r requirements.txt
+poetry install
 ```
 
-3. Create a `.env` file from the template:
+3. Create a `.env` file with your configuration:
 ```bash
-cp .env.template .env
+touch .env
 ```
 
 4. Configure your environment variables in `.env`:
@@ -65,19 +68,18 @@ This will start both the market scanner (which monitors for open instances and c
 
 ```
 ├── src/
-│   ├── agents/            # AI agents for code modification
-│   │   ├── aider_modify_repo.py  # Aider integration
+│   ├── agents/            # AI agent for code modification
+│   │   ├── aider_modify_repo.py  # Aider integration for repository modifications
 │   │   └── prompt_cache.py       # Caching for AI responses
 │   ├── utils/             # Utility functions
-│   │   └── git.py         # Git operations
+│   │   └── git.py         # Git operations and repository management
 │   ├── market_scan.py     # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
-│   ├── config.py         # Configuration settings
-│   └── enums.py          # Enumerations
+│   ├── config.py         # Configuration and settings management
+│   └── enums.py          # Enumerations and constants
 ├── main.py             # Main application entry point
-├── requirements.txt    # Python dependencies
-├── .env.template      # Environment variables template
-└── README.md         # This file
+├── pyproject.toml      # Project metadata and dependencies
+└── README.md          # Project documentation
 ```
 
 ## Configuration
