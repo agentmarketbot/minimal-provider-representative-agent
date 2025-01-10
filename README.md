@@ -44,7 +44,7 @@ cp .env.template .env
 4. Configure your environment variables in `.env`:
 ```
 PROJECT_NAME=minimal-provider-agent-market
-FOUNDATION_MODEL_NAME=gpt-4o
+FOUNDATION_MODEL_NAME=gpt-4
 OPENAI_API_KEY=your_openai_api_key
 MARKET_API_KEY=your_market_api_key
 GITHUB_PAT=your_github_pat
@@ -102,7 +102,7 @@ python main.py
 
 The service can be configured through environment variables in the `.env` file:
 
-- `FOUNDATION_MODEL_NAME`: The AI model to use (default: gpt-4o)
+- `FOUNDATION_MODEL_NAME`: The AI model to use (default: gpt-4)
 - `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
 - `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
 - `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ModelName(str, Enum):
-    gpt_4o = "gpt-4o"
+    gpt_4 = "gpt-4"
 
 
 class AgentType(str, Enum):
