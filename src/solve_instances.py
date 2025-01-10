@@ -69,30 +69,46 @@ def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[Ins
         return None
 
 
-def _clean_response(response: str) -> str:
+def _clean_response(response: str, conversation_history: str = None) -> str:
     prompt = """
-    Below is a code review response. Extract and list only the technical improvements 
-    or changes requested in the PR review. Focus on code changes, implementation 
-    details, and technical suggestions. Exclude any git-related suggestions 
-    (like splitting PRs, improving commit messages, or branch management).
+    Below is a code review response and the previous conversation history. Extract and list only the NEW 
+    technical improvements or changes requested in the PR review that haven't been mentioned before. 
+    Focus on code changes, implementation details, and technical suggestions. 
+    Exclude any git-related suggestions (like splitting PRs, improving commit messages, or branch management).
     Format the technical items in a clear, concise manner while maintaining their accuracy.
 
-    Response:
+    If there are no new relevant technical suggestions to add that haven't been mentioned before, 
+    respond with exactly 'NO_RESPONSE_NEEDED'. Otherwise, list only the new technical improvements.
+
+    Previous conversation:
+    {history}\n\n
+
+    Current response to analyze:
     {feedback}
     """
 
     try:
         cleaned = openai.chat.completions.create(
-            model=WEAK_MODEL,
+            model=ModelName.gpt_4o,
             messages=[
                 {
                     "role": "system",
                     "content": (
                         "You are a technical assistant that extracts and organizes key "
-                        "improvements from code reviews."
+                        "improvements from code reviews. If there are no new relevant technical "
+                        "suggestions to add, respond with NO_RESPONSE_NEEDED. Otherwise, ensure "
+                        "suggestions are not repeated from previous conversations."
                     ),
                 },
-                {"role": "user", "content": prompt.format(feedback=response)},
+                {
+                    "role": "user",
+                    "content": prompt.format(
+                        feedback=response,
+                        history=conversation_history
+                        if conversation_history
+                        else "No previous conversation",
+                    ),
+                },
             ],
         )
         return cleaned.choices[0].message.content.strip()
@@ -158,7 +174,13 @@ def _solve_instance(
             logger.info("No response needed for this instance")
             return None
 
-        cleaned_response = _clean_response(response.strip())
+        cleaned_response = _clean_response(
+            response.strip(), conversation_history=instance_to_solve.messages_history
+        )
+        if cleaned_response == "NO_RESPONSE_NEEDED":
+            logger.info("No response needed for this instance")
+            return None
+
         return cleaned_response
 
     except Exception as e:
