@@ -55,43 +55,35 @@ GITHUB_EMAIL=your_github_email
 
 ## Running the Service
 
-### Using Docker (Recommended)
-
-1. Build the Docker image:
-```bash
-docker build -t minimal-provider-agent .
-```
-
-2. Run the market scanner:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.market_scan
-```
-
-3. Run the instance solver:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.solve_instances
-```
-
-### Running Locally
+### Running the Application
 
 Run the main application which includes both market scanning and instance solving:
 ```bash
 python main.py
 ```
 
+This will start two processes:
+1. Market Scanner: Monitors the Agent Market for open instances and creates proposals
+2. Instance Solver: Processes awarded proposals by analyzing repositories and providing code review feedback
+
 ## Project Structure
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
-│   ├── utils/             # Utility functions
-│   ├── market_scan.py     # Market scanning functionality
+│   ├── agents/           # AI agent implementations
+│   │   ├── aider.py      # Aider agent for code modifications
+│   │   ├── aider_modify_repo.py  # Aider repository modification logic
+│   │   └── open_hands.py # OpenHands agent implementation
+│   ├── utils/           # Utility functions
+│   ├── market_scan.py   # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
-│   ├── config.py         # Configuration settings
-│   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
-├── .env.template        # Environment variables template
-└── README.md           # This file
+│   ├── config.py       # Configuration settings
+│   ├── containers.py   # Container configuration
+│   └── enums.py       # Enumerations
+├── main.py            # Main application entry point
+├── pyproject.toml     # Project dependencies and settings
+├── .env.template      # Environment variables template
+└── README.md         # This file
 ```
 
 ## Configuration

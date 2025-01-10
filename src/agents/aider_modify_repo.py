@@ -15,21 +15,10 @@ from loguru import logger
 
 from src.utils.git import clone_repository, find_github_repo_url
 
-from .prompt_cache import PromptCache
-
 
 def modify_repo_with_aider(model_name, solver_command, test_command=None) -> str:
     io_instance = InputOutput(yes=True)
     model = Model("sonnet")
-    prompt_cache = PromptCache()
-
-    prompt_cache.cleanup_expired()
-
-    cached_response = prompt_cache.get(solver_command, model_name)
-    if cached_response:
-        logger.info("Using cached response")
-        return cached_response
-
     output_buffer = io.StringIO()
 
     temp_dir = tempfile.mkdtemp(prefix="aider_")
@@ -61,10 +50,6 @@ def modify_repo_with_aider(model_name, solver_command, test_command=None) -> str
 
         full_output = output_buffer.getvalue()
         logger.info(f"Full output: {full_output}")
-
-        if full_output:
-            prompt_cache.store(solver_command, model_name, full_output)
-
         return full_output
 
     except Exception as e:
