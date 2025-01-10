@@ -3,14 +3,14 @@ from typing import Optional
 
 import openai
 
-from src.config import SETTINGS, WEAK_MODEL
+from src.config import SETTINGS
 
 openai.api_key = SETTINGS.openai_api_key
 
 
 def get_pr_title(background: str) -> str:
     response = openai.chat.completions.create(
-        model=WEAK_MODEL,
+        model=SETTINGS.weak_model,
         messages=[
             {
                 "role": "system",
@@ -36,7 +36,7 @@ def get_pr_body(background: str, logs: str) -> str:
     issue_number = match.group(1) if match else None
 
     response = openai.chat.completions.create(
-        model=WEAK_MODEL,
+        model=SETTINGS.weak_model,
         messages=[
             {
                 "role": "system",

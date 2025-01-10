@@ -183,6 +183,24 @@ def create_pull_request(
 
 
 def extract_repo_name_from_url(repo_url: str) -> str:
+    """Extract the repository name from a GitHub URL.
+
+    Args:
+        repo_url (str): The GitHub repository URL. Can be either HTTPS (https://github.com/owner/repo)
+                       or SSH (git@github.com:owner/repo) format.
+
+    Returns:
+        str: The repository name in the format "owner/repo".
+
+    Raises:
+        ValueError: If the repository URL format is invalid or the repository name cannot be extracted.
+
+    Example:
+        >>> extract_repo_name_from_url("https://github.com/owner/repo.git")
+        'owner/repo'
+        >>> extract_repo_name_from_url("git@github.com:owner/repo")
+        'owner/repo'
+    """
     # Remove trailing slashes and .git suffix
     repo_url = repo_url.rstrip("/")
     repo_url = repo_url.removesuffix(".git")

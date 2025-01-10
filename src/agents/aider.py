@@ -5,7 +5,7 @@ import openai
 from dotenv import load_dotenv
 from loguru import logger
 
-from src.config import SETTINGS, WEAK_MODEL
+from src.config import SETTINGS
 
 load_dotenv()
 openai.api_key = SETTINGS.openai_api_key
@@ -43,7 +43,7 @@ def suggest_test_command(repo_path: str) -> str:
     logger.info("Requesting OpenAI to generate a test command based on README content.")
     try:
         response = openai.chat.completions.create(
-            model=WEAK_MODEL,
+            model=SETTINGS.weak_model,
             messages=[
                 {
                     "role": "system",

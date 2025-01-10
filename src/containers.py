@@ -5,7 +5,7 @@ import openai
 from docker import from_env as docker_from_env
 from loguru import logger
 
-from src.config import SETTINGS, WEAK_MODEL
+from src.config import SETTINGS
 
 openai.api_key = SETTINGS.openai_api_key
 
@@ -27,7 +27,7 @@ def _clean_logs(logs: str) -> str:
 
     try:
         response = openai.chat.completions.create(
-            model=WEAK_MODEL,
+            model=SETTINGS.weak_model,
             messages=[
                 {
                     "role": "system",

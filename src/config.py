@@ -9,9 +9,8 @@ from src.enums import AgentType, ModelName
 load_dotenv()
 
 
-WEAK_MODEL = "gpt-4o-mini"
-
 class Settings(BaseSettings):
+    weak_model: str = Field("gpt-4o-mini", description="The weaker model to use for less demanding tasks.")
     openai_api_key: str = Field(..., description="The API key for OpenAI.")
     github_pat: str = Field(..., description="The personal access token for GitHub.")
     github_username: str = Field(..., description="The GitHub username.")
