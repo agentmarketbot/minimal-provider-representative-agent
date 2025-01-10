@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings
 
-from src.enums import AgentType, ModelName
+# Note: Anthropic API key validation was removed as part of cleanup since it's not currently used
+from src.enums import AgentType
 
 load_dotenv()
 

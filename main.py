@@ -35,7 +35,9 @@ def run_solve_instances():
 
 
 def main():
+    from src.config import SETTINGS
     logger.info("Starting application...")
+    logger.info(f"Using agent implementation: {SETTINGS.agent_type}")
 
     market_scan_process = multiprocessing.Process(target=run_market_scan)
     solve_instances_process = multiprocessing.Process(target=run_solve_instances)

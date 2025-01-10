@@ -4,7 +4,7 @@ from .agent_market import (
     get_pr_title,
     remove_all_urls,
 )
-from .file_utils import change_directory_ownership_recursive, copy_file_to_directory
+# File utilities were removed as part of cleanup since they're not currently used
 from .git import (
     add_aider_logs_as_pr_comments,
     add_and_commit,
@@ -33,8 +33,7 @@ __all__ = [
     "remove_all_urls",
     "set_git_config",
     "create_and_push_branch",
-    "copy_file_to_directory",
-    "change_directory_ownership_recursive",
+    # File utilities removed as part of cleanup
     "get_last_pr_comments",
     "build_solver_command",
     "get_pr_url",
