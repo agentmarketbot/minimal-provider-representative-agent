@@ -11,6 +11,14 @@ load_dotenv()
 
 class Settings(BaseSettings):
     weak_model: str = Field("gpt-4o-mini", description="The weaker model to use for less demanding tasks.")
+
+    @field_validator("weak_model")
+    def validate_weak_model(cls, v: str) -> str:
+        try:
+            ModelName(v)
+        except ValueError:
+            raise ValueError(f"Invalid model name. Must be one of: {', '.join(m.value for m in ModelName)}")
+        return v
     openai_api_key: str = Field(..., description="The API key for OpenAI.")
     github_pat: str = Field(..., description="The personal access token for GitHub.")
     github_username: str = Field(..., description="The GitHub username.")
