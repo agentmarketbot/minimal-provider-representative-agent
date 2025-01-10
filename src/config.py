@@ -31,16 +31,11 @@ class Settings(BaseSettings):
     max_bid: float = Field(0.01, gt=0, description="The maximum bid for a proposal.")
     agent_type: AgentType = Field(..., description="The type of agent to use.")
 
-    anthropic_api_key: str | None = Field(None, description="The API key for Anthropic.")
-
     class Config:
         case_sensitive = False
 
     @model_validator(mode="after")
     def validate_model(self) -> "Settings":
-        if self.agent_type == AgentType.raaid and self.anthropic_api_key is None:
-            raise ValueError("anthropic_api_key is required when agent_type is raaid")
-
         return self
 
     @classmethod

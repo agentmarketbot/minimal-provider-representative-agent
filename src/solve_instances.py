@@ -13,7 +13,7 @@ from src.enums import ModelName
 TIMEOUT = httpx.Timeout(10.0)
 
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
+WEAK_MODEL = "gpt-3.5-turbo"
 
 
 @dataclass
@@ -89,7 +89,7 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
 
     try:
         cleaned = openai.chat.completions.create(
-            model=ModelName.gpt_4o,
+            model=ModelName.gpt_4_turbo,
             messages=[
                 {
                     "role": "system",
@@ -165,7 +165,7 @@ def _solve_instance(
     solver_command = "\n\n\n".join(solver_command_parts)
 
     try:
-        response = modify_repo_with_aider(ModelName.gpt_4o, solver_command)
+        response = modify_repo_with_aider(ModelName.gpt_4_turbo, solver_command)
         if not response:
             logger.warning("Received empty response from Aider")
             return None

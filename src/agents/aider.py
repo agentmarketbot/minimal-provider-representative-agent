@@ -9,7 +9,7 @@ from src.config import SETTINGS
 
 load_dotenv()
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
+WEAK_MODEL = "gpt-3.5-turbo"
 
 
 def _get_readme_content(repo_path: str) -> str:

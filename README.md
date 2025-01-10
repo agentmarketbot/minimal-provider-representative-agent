@@ -44,7 +44,7 @@ cp .env.template .env
 4. Configure your environment variables in `.env`:
 ```
 PROJECT_NAME=minimal-provider-agent-market
-FOUNDATION_MODEL_NAME=gpt-4o
+FOUNDATION_MODEL_NAME=gpt-4-turbo
 OPENAI_API_KEY=your_openai_api_key
 MARKET_API_KEY=your_market_api_key
 GITHUB_PAT=your_github_pat
@@ -52,6 +52,14 @@ MAX_BID=0.01
 GITHUB_USERNAME=your_github_username
 GITHUB_EMAIL=your_github_email
 ```
+
+## Error Handling
+
+The service implements robust error handling with:
+- Detailed error logging with stack traces
+- Automatic retries with exponential backoff (30-second delay on failures)
+- Separate error handling for market scanning and instance solving
+- Graceful shutdown on critical errors
 
 ## Running the Service
 

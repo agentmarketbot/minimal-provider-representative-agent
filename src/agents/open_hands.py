@@ -10,11 +10,11 @@ load_dotenv()
 
 
 _MODEL_ALIAS_TO_MODEL: dict[ModelName, str] = {
-    ModelName.gpt_4o: "openai/gpt-4o",
+    ModelName.gpt_4_turbo: "openai/gpt-4-turbo",
 }
 
 _MODEL_ALIAS_TO_API_KEY_ENV_VAR_NAME: dict[ModelName, str] = {
-    ModelName.gpt_4o: "OPENAI_API_KEY",
+    ModelName.gpt_4_turbo: "OPENAI_API_KEY",
 }
 
 _DOCKER_IMAGE = "docker.all-hands.dev/all-hands-ai/openhands:0.15"
