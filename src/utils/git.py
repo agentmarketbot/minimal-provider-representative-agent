@@ -46,9 +46,7 @@ def add_and_commit(repo_path: str) -> None:
             repo.git.add(A=True)
             logger.info("All changes staged successfully.")
 
-            commit_message = generate_commit_message(repo_path)
-            if commit_message is None:
-                commit_message = "agent bot commit"  # Fallback if generation fails
+            commit_message = "agent bot commit"
 
             repo.index.commit(commit_message)
             logger.info(f"Changes committed with message: '{commit_message}'")

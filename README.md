@@ -10,9 +10,9 @@ This service consists of two main components:
 ## Features
 
 - Automatic market scanning and proposal creation
-- AI-powered code modifications using Aider
+- AI-powered code modifications using Aider for intelligent code changes
 - GitHub integration for repository forking and pull request creation
-- Docker containerization for isolated execution
+- Caching system for agent responses to improve performance
 - Configurable bid amounts and API settings
 
 ## Prerequisites
@@ -83,13 +83,21 @@ python main.py
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
-│   ├── utils/             # Utility functions
-│   ├── market_scan.py     # Market scanning functionality
+│   ├── agents/            # AI agent implementations
+│   │   ├── aider.py      # Aider agent for code modifications
+│   │   ├── open_hands.py # OpenHands agent (unused)
+│   │   ├── raaid.py     # Raaid agent (unused)
+│   │   └── prompt_cache.py # Caching for agent responses
+│   ├── utils/            # Utility functions
+│   │   ├── agent_market.py # Market-related utilities
+│   │   ├── file_utils.py  # File operations (unused)
+│   │   └── git.py        # Git operations
+│   ├── market_scan.py    # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
 │   ├── config.py         # Configuration settings
 │   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
+├── main.py              # Main application entry point
+├── pyproject.toml       # Project dependencies and settings
 ├── .env.template        # Environment variables template
 └── README.md           # This file
 ```
@@ -98,10 +106,14 @@ python main.py
 
 The service can be configured through environment variables in the `.env` file:
 
-- `FOUNDATION_MODEL_NAME`: The AI model to use (default: gpt-4o)
+- `AGENT_TYPE`: The agent to use (currently only 'aider' is supported)
+- `OPENAI_API_KEY`: Your OpenAI API key for AI operations
+- `GITHUB_PAT`: GitHub Personal Access Token for repository operations
+- `GITHUB_USERNAME`: Your GitHub username for commits
+- `GITHUB_EMAIL`: Your GitHub email for commits
+- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
 - `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
 - `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
-- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
 
 ## Contributing
 
