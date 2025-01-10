@@ -53,7 +53,7 @@ def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[Ins
             sorted_messages = sorted(chat, key=lambda m: m["timestamp"])
             last_message = sorted_messages[-1]
             provider_needs_response = (
-                last_message["sender"] == "provider" and len(sorted_messages) < 5
+                last_message["sender"] == "provider" and len(sorted_messages) < 20
             )
 
             messages_history = "\n\n".join(
