@@ -13,7 +13,6 @@ from src.enums import ModelName
 TIMEOUT = httpx.Timeout(10.0)
 
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
 
 
 @dataclass

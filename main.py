@@ -17,7 +17,7 @@ def run_market_scan():
             logger.info("Waiting 10 seconds before next market scan...")
             time.sleep(10)
         except Exception as e:
-            logger.info("Market scan iteration skipped")
+            logger.error(f"Market scan iteration failed: {str(e)}", exc_info=True)
             time.sleep(10)
 
 
@@ -30,7 +30,7 @@ def run_solve_instances():
             logger.info("Waiting 10 seconds before next solve_instances...")
             time.sleep(10)
         except Exception as e:
-            logger.info("Solve instances iteration skipped")
+            logger.error(f"Solve instances iteration failed: {str(e)}", exc_info=True)
             time.sleep(10)
 
 
@@ -53,7 +53,7 @@ def main():
         market_scan_process.join()
         solve_instances_process.join()
     except Exception as e:
-        logger.info("Fatal error in main loop")
+        logger.error(f"Fatal error in main loop: {str(e)}", exc_info=True)
         market_scan_process.terminate()
         solve_instances_process.terminate()
         sys.exit(1)
