@@ -1,54 +1,70 @@
-# Minimal Provider Agent Market
+# OpenHands AI
 
-A Python-based service that interacts with the [Agent Market](https://agent.market) platform to automatically scan for open instances, create proposals, and solve coding tasks using AI assistance.  [Agent Market](https://agent.market) is a two sided market for reward driven agents.
+A Python-based service that interacts with the [Agent Market](https://agent.market) platform to automatically scan for open instances, create proposals, and solve coding tasks using AI assistance. [Agent Market](https://agent.market) is a two-sided marketplace for reward-driven AI agents.
+
 ## Overview
 
-This service consists of two main components:
-- Market Scanner: Monitors the [Agent Market](https://agent.market) for open instances and creates proposals
-- Instance Solver: Processes awarded proposals by cloning repositories, making necessary changes, and submitting pull requests
+OpenHands AI is an intelligent agent that participates in the Agent Market ecosystem by:
+- Automatically scanning for and evaluating open task instances
+- Creating competitive proposals based on task requirements
+- Solving awarded tasks using advanced AI capabilities
+- Submitting high-quality pull requests with comprehensive solutions
+
+The service operates autonomously and consists of two main components:
+- Market Scanner: Continuously monitors the [Agent Market](https://agent.market) for new task instances and creates well-crafted proposals
+- Instance Solver: Processes awarded tasks by analyzing requirements, implementing solutions, and submitting pull requests
 
 ## Features
 
-- Automatic market scanning and proposal creation
-- AI-powered code modifications using Aider
-- GitHub integration for repository forking and pull request creation
-- Docker containerization for isolated execution
-- Configurable bid amounts and API settings
+- Intelligent task evaluation and automated proposal creation
+- Advanced AI-powered code analysis and modification
+- Comprehensive GitHub integration for repository management
+- Secure Docker containerization for isolated task execution
+- Flexible configuration system for customized operation
+- Real-time market monitoring and response
+- Automated testing and validation of solutions
+- Detailed logging and execution tracking
 
 ## Prerequisites
 
-- Python 3.8+
-- Docker
-- OpenAI API key
-- Agent Market API key
-- GitHub Personal Access Token
+- Python 3.10 or higher
+- Docker (latest stable version)
+- OpenAI API key with GPT-4 access
+- Agent Market API key (obtain from [agent.market](https://agent.market))
+- GitHub Personal Access Token with repo permissions
+- Git configured on the host system
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/minimal-provider-agent-market.git
-cd minimal-provider-agent-market
+git clone https://github.com/agent-market/openhands-ai.git
+cd openhands-ai
 ```
 
-2. Install dependencies:
+2. Install Poetry (if not already installed):
 ```bash
-pip install -r requirements.txt
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-3. Create a `.env` file from the template:
+3. Install dependencies using Poetry:
+```bash
+poetry install
+```
+
+4. Create and configure your environment:
 ```bash
 cp .env.template .env
 ```
 
-4. Configure your environment variables in `.env`:
-```
-PROJECT_NAME=minimal-provider-agent-market
-FOUNDATION_MODEL_NAME=gpt-4o
+5. Update the `.env` file with your credentials:
+```ini
+PROJECT_NAME=openhands-ai
+FOUNDATION_MODEL_NAME=gpt-4
 OPENAI_API_KEY=your_openai_api_key
 MARKET_API_KEY=your_market_api_key
 GITHUB_PAT=your_github_pat
-MAX_BID=0.01
+MAX_BID=0.05
 GITHUB_USERNAME=your_github_username
 GITHUB_EMAIL=your_github_email
 ```
@@ -59,58 +75,109 @@ GITHUB_EMAIL=your_github_email
 
 1. Build the Docker image:
 ```bash
-docker build -t minimal-provider-agent .
+docker build -t openhands-ai .
 ```
 
-2. Run the market scanner:
+2. Run the complete service:
 ```bash
-docker run --env-file .env minimal-provider-agent python -m src.market_scan
+docker run --env-file .env openhands-ai
 ```
 
-3. Run the instance solver:
+### Running Locally with Poetry
+
+1. Activate the Poetry shell:
 ```bash
-docker run --env-file .env minimal-provider-agent python -m src.solve_instances
+poetry shell
 ```
 
-### Running Locally
-
-Run the main application which includes both market scanning and instance solving:
+2. Run the service:
 ```bash
 python main.py
+```
+
+You can also run individual components:
+```bash
+# Run market scanner only
+python -m src.market_scan
+
+# Run instance solver only
+python -m src.solve_instances
 ```
 
 ## Project Structure
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
-│   ├── utils/             # Utility functions
-│   ├── market_scan.py     # Market scanning functionality
-│   ├── solve_instances.py # Instance solving logic
-│   ├── config.py         # Configuration settings
-│   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
-├── .env.template        # Environment variables template
-└── README.md           # This file
+│   ├── solver/          # AI-powered task solving logic
+│   ├── market/          # Market interaction components
+│   ├── utils/           # Utility functions and helpers
+│   ├── config.py        # Configuration management
+│   ├── constants.py     # System constants
+│   └── types.py         # Type definitions
+├── tests/              # Test suite
+├── .env.template       # Environment template
+├── .pre-commit-config.yaml  # Pre-commit hooks
+├── pyproject.toml     # Poetry dependencies and settings
+├── LICENSE           # MIT License
+└── README.md        # Documentation
 ```
 
 ## Configuration
 
-The service can be configured through environment variables in the `.env` file:
+The service is configured through environment variables in the `.env` file:
 
-- `FOUNDATION_MODEL_NAME`: The AI model to use (default: gpt-4o)
-- `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
+### Required Settings
+- `OPENAI_API_KEY`: Your OpenAI API key for GPT-4 access
+- `MARKET_API_KEY`: Your Agent Market API key
+- `GITHUB_PAT`: GitHub Personal Access Token
+- `GITHUB_USERNAME`: Your GitHub username
+- `GITHUB_EMAIL`: Your GitHub email
+
+### Optional Settings
+- `FOUNDATION_MODEL_NAME`: AI model to use (default: gpt-4)
+- `MAX_BID`: Maximum bid amount for proposals (default: 0.05)
 - `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
-- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
+- `LOG_LEVEL`: Logging verbosity (default: INFO)
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+We welcome contributions! Here's how you can help:
+
+1. **Fork & Clone**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/openhands-ai.git
+   cd openhands-ai
+   ```
+
+2. **Set Up Development Environment**
+   ```bash
+   poetry install
+   pre-commit install
+   ```
+
+3. **Create a Branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+4. **Make Changes**
+   - Write clean, documented code
+   - Add tests for new features
+   - Update documentation as needed
+
+5. **Test Your Changes**
+   ```bash
+   poetry run pytest
+   ```
+
+6. **Submit a Pull Request**
+   - Provide a clear description of the changes
+   - Reference any related issues
+   - Ensure all tests pass
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+Fixes #9
