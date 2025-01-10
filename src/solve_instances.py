@@ -156,6 +156,9 @@ def _solve_instance(
     solver_command_parts = [
         system_prompt,
     ]
+    repo_info = None
+    files_url = None
+    issue_link = None
 
     if instance_to_solve.messages_history:
         messages = instance_to_solve.messages_history
@@ -185,15 +188,15 @@ def _solve_instance(
                             fork_repo_url = f"https://github.com/agentmarketbot/{repo_name}"
                             repo_info = {"url": fork_repo_url, "branch": branch_name}
                         else:
-                            repo_info = None
                             logger.warning("Could not extract fork repository information")
                 except Exception as e:
                     logger.warning(f"Failed to fetch PR content: {e}")
-                    repo_info = None
 
     solver_command = "\n\n\n".join(solver_command_parts)
-    solver_command += f"\nFiles view: {files_url}"
-    solver_command += f"\nIssue: {issue_link.group(0)}"
+    if files_url:
+        solver_command += f"\nFiles view: {files_url}"
+    if issue_link:
+        solver_command += f"\nIssue: {issue_link.group(0)}"
 
     try:
         response = modify_repo_with_aider(ModelName.gpt_4o, solver_command, repo_info)

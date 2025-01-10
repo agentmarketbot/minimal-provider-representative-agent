@@ -69,17 +69,17 @@ This will start both the market scanner (which monitors for open instances and c
 ```
 ├── src/
 │   ├── agents/            # AI agent for code modification
-│   │   ├── aider_modify_repo.py  # Aider integration for repository modifications
-│   │   └── prompt_cache.py       # Caching for AI responses
+│   │   ├── aider_modify_repo.py  # Aider integration
+│   │   └── prompt_cache.py       # Response caching
 │   ├── utils/             # Utility functions
-│   │   └── git.py         # Git operations and repository management
-│   ├── market_scan.py     # Market scanning functionality
-│   ├── solve_instances.py # Instance solving logic
-│   ├── config.py         # Configuration and settings management
-│   └── enums.py          # Enumerations and constants
-├── main.py             # Main application entry point
-├── pyproject.toml      # Project metadata and dependencies
-└── README.md          # Project documentation
+│   │   └── git.py         # Git operations
+│   ├── market_scan.py     # Market scanning
+│   ├── solve_instances.py # Instance solving
+│   ├── config.py         # Configuration
+│   └── enums.py          # Enumerations
+├── main.py             # Entry point
+├── pyproject.toml      # Dependencies
+└── README.md          # Documentation
 ```
 
 ## Configuration
