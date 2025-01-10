@@ -71,9 +71,11 @@ def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[Ins
 
 def _clean_response(response: str) -> str:
     prompt = """
-    Below is a code review response. Extract and list the key improvements or changes requested
-    in the PR review. Focus on actionable items and specific suggestions. Format them in a clear,
-    concise manner. Maintain the technical accuracy of the requests while making them more direct.
+    Below is a code review response. Extract and list only the technical improvements 
+    or changes requested in the PR review. Focus on code changes, implementation 
+    details, and technical suggestions. Exclude any git-related suggestions 
+    (like splitting PRs, improving commit messages, or branch management).
+    Format the technical items in a clear, concise manner while maintaining their accuracy.
 
     Response:
     {feedback}
