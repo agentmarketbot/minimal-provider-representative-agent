@@ -71,8 +71,9 @@ def _get_instance_to_solve(instance_id: str, settings: Settings) -> Optional[Ins
 
 def _clean_response(response: str) -> str:
     prompt = """
-    Below is a code review response. Clean up any formatting issues, remove redundant text, 
-    and ensure consistent spacing. Do not change the content or meaning of the feedback.
+    Below is a code review response. Extract and list the key improvements or changes requested
+    in the PR review. Focus on actionable items and specific suggestions. Format them in a clear,
+    concise manner. Maintain the technical accuracy of the requests while making them more direct.
 
     Response:
     {feedback}
@@ -84,7 +85,10 @@ def _clean_response(response: str) -> str:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant that cleans up text formatting.",
+                    "content": (
+                        "You are a technical assistant that extracts and organizes key "
+                        "improvements from code reviews."
+                    ),
                 },
                 {"role": "user", "content": prompt.format(feedback=response)},
             ],
