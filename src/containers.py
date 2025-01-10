@@ -5,10 +5,9 @@ import openai
 from docker import from_env as docker_from_env
 from loguru import logger
 
-from src.config import SETTINGS
+from src.config import SETTINGS, WEAK_MODEL
 
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
 
 
 def _clean_logs(logs: str) -> str:

@@ -46,9 +46,7 @@ def add_and_commit(repo_path: str) -> None:
             repo.git.add(A=True)
             logger.info("All changes staged successfully.")
 
-            commit_message = generate_commit_message(repo_path)
-            if commit_message is None:
-                commit_message = "agent bot commit"  # Fallback if generation fails
+            commit_message = "agent bot commit"
 
             repo.index.commit(commit_message)
             logger.info(f"Changes committed with message: '{commit_message}'")
@@ -185,14 +183,6 @@ def create_pull_request(
 
 
 def extract_repo_name_from_url(repo_url: str) -> str:
-    """Extract the repository name from a GitHub URL.
-
-    Args:
-        repo_url: The GitHub repository URL
-
-    Returns:
-        The repository name in the format "owner/repo"
-    """
     # Remove trailing slashes and .git suffix
     repo_url = repo_url.rstrip("/")
     repo_url = repo_url.removesuffix(".git")

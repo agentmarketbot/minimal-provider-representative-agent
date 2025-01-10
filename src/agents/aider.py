@@ -5,11 +5,10 @@ import openai
 from dotenv import load_dotenv
 from loguru import logger
 
-from src.config import SETTINGS
+from src.config import SETTINGS, WEAK_MODEL
 
 load_dotenv()
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
 
 
 def _get_readme_content(repo_path: str) -> str:

@@ -3,10 +3,9 @@ from typing import Optional
 
 import openai
 
-from src.config import SETTINGS
+from src.config import SETTINGS, WEAK_MODEL
 
 openai.api_key = SETTINGS.openai_api_key
-WEAK_MODEL = "gpt-4o-mini"
 
 
 def get_pr_title(background: str) -> str:
