@@ -21,12 +21,7 @@ docker = "^7.1.0"
 openai = "1.57.0"
 gitpython = "^3.1.43"
 
-[tool.poetry.group.raaid]
-optional = true
 
-[tool.poetry.group.raaid.dependencies]
-ra-aid = "^0.11.3"
-python = ">=3.11,<3.12"
 
 [tool.poetry.group.aider]
 optional = true

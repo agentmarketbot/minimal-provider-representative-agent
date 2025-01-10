@@ -62,19 +62,14 @@ GITHUB_EMAIL=your_github_email
 docker build -t minimal-provider-agent .
 ```
 
-2. Run the market scanner:
+2. Run the service:
 ```bash
-docker run --env-file .env minimal-provider-agent python -m src.market_scan
-```
-
-3. Run the instance solver:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.solve_instances
+docker run --env-file .env minimal-provider-agent python main.py
 ```
 
 ### Running Locally
 
-Run the main application which includes both market scanning and instance solving:
+Run the main application which starts both market scanning and instance solving processes:
 ```bash
 python main.py
 ```
@@ -83,13 +78,22 @@ python main.py
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
-│   ├── utils/             # Utility functions
-│   ├── market_scan.py     # Market scanning functionality
+│   ├── agents/            # AI agents implementation
+│   │   ├── aider.py
+│   │   ├── aider_modify_repo.py
+│   │   ├── open_hands.py
+│   │   └── prompt_cache.py
+│   ├── utils/            # Utility functions
+│   │   ├── agent_market.py
+│   │   ├── file_utils.py
+│   │   └── git.py
+│   ├── market_scan.py    # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
 │   ├── config.py         # Configuration settings
+│   ├── containers.py     # Container definitions
 │   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
+├── main.py              # Main application entry point
+├── pyproject.toml       # Project dependencies and settings
 ├── .env.template        # Environment variables template
 └── README.md           # This file
 ```
