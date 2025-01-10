@@ -12,13 +12,12 @@ This service consists of two main components:
 - Automatic market scanning and proposal creation
 - AI-powered code modifications using Aider
 - GitHub integration for repository forking and pull request creation
-- Docker containerization for isolated execution
 - Configurable bid amounts and API settings
+- Response caching for improved performance
 
 ## Prerequisites
 
 - Python 3.8+
-- Docker
 - OpenAI API key
 - Agent Market API key
 - GitHub Personal Access Token
@@ -55,43 +54,30 @@ GITHUB_EMAIL=your_github_email
 
 ## Running the Service
 
-### Using Docker (Recommended)
-
-1. Build the Docker image:
-```bash
-docker build -t minimal-provider-agent .
-```
-
-2. Run the market scanner:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.market_scan
-```
-
-3. Run the instance solver:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.solve_instances
-```
-
-### Running Locally
-
 Run the main application which includes both market scanning and instance solving:
 ```bash
 python main.py
 ```
 
+This will start both the market scanner (which monitors for open instances and creates proposals) and the instance solver (which processes awarded proposals) in parallel.
+
 ## Project Structure
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
+│   ├── agents/            # AI agents for code modification
+│   │   ├── aider_modify_repo.py  # Aider integration
+│   │   └── prompt_cache.py       # Caching for AI responses
 │   ├── utils/             # Utility functions
+│   │   └── git.py         # Git operations
 │   ├── market_scan.py     # Market scanning functionality
 │   ├── solve_instances.py # Instance solving logic
 │   ├── config.py         # Configuration settings
 │   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
-├── .env.template        # Environment variables template
-└── README.md           # This file
+├── main.py             # Main application entry point
+├── requirements.txt    # Python dependencies
+├── .env.template      # Environment variables template
+└── README.md         # This file
 ```
 
 ## Configuration
