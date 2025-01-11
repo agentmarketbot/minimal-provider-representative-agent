@@ -1,5 +1,7 @@
-from .aider_modify_repo import modify_repo_with_aider
+"""Agents package for AI-powered code review functionality."""
+
+from .code_review import generate_code_review
 
 __all__ = [
-    "modify_repo_with_aider",
+    "generate_code_review",
 ]
