@@ -16,7 +16,17 @@ The codebase has been simplified to focus on these essential functions, removing
 - Integration with Agent Market API
 - Configurable bid amounts and API settings
 
-Note: This is a simplified version that focuses on core market scanning and instance solving functionality. The CLI interface and some auxiliary features have been removed to streamline the codebase.
+Note: This is a simplified version that focuses on core market scanning and instance solving functionality. The following features have been removed to streamline the codebase:
+
+1. **CLI Interface Removed**: The application now runs as a service only, removing the command-line interface to simplify usage and maintenance.
+2. **Repository Cloning Removed**: Direct repository operations have been removed, focusing on API-based interactions.
+3. **Caching Mechanism Removed**: Responses are now generated on-demand for better consistency, though with slightly higher latency.
+
+## Performance Considerations
+
+- Without caching, each instance review requires a new API call
+- The application uses asynchronous operations for market scanning
+- Rate limiting is implemented to prevent API throttling
 
 ## Prerequisites
 
@@ -24,6 +34,14 @@ Note: This is a simplified version that focuses on core market scanning and inst
 - OpenAI API key (for AI-powered code review)
 - Agent Market API key
 - GitHub credentials (username, email, and PAT)
+
+### Core Dependencies
+
+- `httpx`: For API communication with Agent Market
+- `openai`: For AI-powered code review
+- `loguru`: For structured logging
+- `pydantic`: For settings management and validation
+- `aider-chat`: For code review suggestions
 
 ## Installation
 
@@ -71,18 +89,34 @@ Each component runs in its own process and will automatically retry on failures.
 
 ```
 ├── src/
-│   ├── agents/           # AI agent implementations
+│   ├── agents/           # AI agent implementation (aider integration)
+│   │   └── aider_modify_repo.py  # Code review using Aider
 │   ├── utils/            # Utility functions
-│   ├── market_scan.py    # Market scanning functionality
-│   ├── solve_instances.py# Instance solving logic
-│   ├── config.py         # Configuration settings
-│   └── enums.py         # Enumerations
-├── main.py             # Main application entry point
+│   │   └── git.py        # GitHub URL parsing utilities
+│   ├── market_scan.py    # Market scanning and proposal creation
+│   ├── solve_instances.py# Instance solving and code review logic
+│   ├── config.py         # Environment and application settings
+│   └── enums.py         # Agent type enumerations
+├── main.py             # Service entry point (runs both handlers)
 ├── pyproject.toml      # Project dependencies and settings
 └── README.md          # Documentation
 ```
 
-Note: The codebase has been streamlined to focus on the core functionality provided by `market_scan_handler` and `solve_instances_handler`. Some auxiliary components have been removed for simplicity.
+Core Components:
+1. `market_scan.py`: Handles market monitoring and proposal creation
+   - Scans for open instances
+   - Creates proposals for instances without GitHub URLs
+   - Uses rate limiting for API stability
+
+2. `solve_instances.py`: Manages instance solving workflow
+   - Processes awarded proposals
+   - Integrates with Aider for code review
+   - Handles chat interactions with providers
+
+3. `aider_modify_repo.py`: Provides AI-powered code review
+   - Integrates with OpenAI for suggestions
+   - Focuses on technical improvements
+   - Maintains security by disabling shell commands
 
 ## Configuration
 
@@ -103,6 +137,32 @@ Optional:
 The service uses two main handlers:
 1. `market_scan_handler`: Monitors the market and creates proposals
 2. `solve_instances_handler`: Processes awarded proposals with AI assistance
+
+## Breaking Changes and Migration Guide
+
+### Removed Features
+
+1. **CLI Interface**
+   - Impact: Command-line operations are no longer available
+   - Migration: Use the service mode by running `python main.py`
+   - Rationale: Simplifies codebase and reduces maintenance overhead
+
+2. **Repository Cloning**
+   - Impact: Direct repository operations have been removed
+   - Migration: Code review now operates via API interactions only
+   - Rationale: Reduces complexity and potential security risks
+
+3. **Caching Mechanism**
+   - Impact: Each request generates fresh responses
+   - Migration: No action needed; responses are now generated on-demand
+   - Rationale: Ensures consistency and reduces state management complexity
+
+### Performance Impact
+
+- **Response Time**: Slightly increased due to removal of caching
+- **Resource Usage**: Reduced due to removal of repository cloning
+- **API Usage**: Increased due to on-demand response generation
+- **Reliability**: Improved through simplified architecture
 
 ## License
 
