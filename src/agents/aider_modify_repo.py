@@ -1,7 +1,6 @@
+"""Module for interacting with the Aider code review tool."""
+
 import io
-import os
-import shutil
-import tempfile
 from contextlib import redirect_stderr, redirect_stdout
 
 from aider.coders import Coder
@@ -9,51 +8,40 @@ from aider.io import InputOutput
 from aider.models import Model
 from loguru import logger
 
-from src.utils.git import find_github_repo_url
 
+def modify_repo_with_aider(review_command: str) -> str:
+    """
+    Use Aider to analyze code and provide review suggestions.
 
-def modify_repo_with_aider(model_name, solver_command, repo_info=None) -> str:
-    io_instance = InputOutput(yes=True)
-    model = Model("sonnet")
+    Args:
+        review_command (str): The review instructions for Aider
 
-    output_buffer = io.StringIO()
-
-    temp_dir = tempfile.mkdtemp(prefix="aider_")
-    logger.info(f"Created temporary directory: {temp_dir}")
-
-    original_cwd = os.getcwd()
-
+    Returns:
+        str: The review suggestions from Aider, or None if an error occurs
+    """
     try:
-        with redirect_stdout(output_buffer), redirect_stderr(output_buffer):
-            os.chdir(temp_dir)
-            logger.info(f"Changed working directory to: {temp_dir}")
+        # Configure Aider
+        io_instance = InputOutput(yes=True)  # Auto-confirm any prompts
+        model = Model("sonnet")  # Use the default model
+        output_buffer = io.StringIO()
 
+        # Capture Aider's output
+        with redirect_stdout(output_buffer), redirect_stderr(output_buffer):
             coder = Coder.create(
                 main_model=model,
                 io=io_instance,
-                suggest_shell_commands=True,
-                auto_commits=False,
+                suggest_shell_commands=False,  # Disable shell commands for security
+                auto_commits=False,  # Disable auto-commits
                 dirty_commits=False,
                 auto_lint=False,
             )
+            coder.run(review_command)
 
-            coder.run(solver_command)
-
-        full_output = output_buffer.getvalue()
-        logger.info(f"Full output: {full_output}")
-
-        return full_output
+        # Extract and return the review suggestions
+        output = output_buffer.getvalue()
+        logger.debug("Aider output: {}", output)
+        return output
 
     except Exception as e:
-        logger.exception(f"Error during execution: {str(e)}")
+        logger.error("Error running Aider: {}", str(e))
         return None
-
-    finally:
-        os.chdir(original_cwd)
-        logger.info(f"Changed back to original directory: {original_cwd}")
-
-        try:
-            shutil.rmtree(temp_dir)
-            logger.info(f"Cleaned up temporary directory: {temp_dir}")
-        except Exception as e:
-            logger.error(f"Error cleaning up temporary directory {temp_dir}: {e}")

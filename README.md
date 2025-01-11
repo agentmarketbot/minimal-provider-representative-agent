@@ -1,27 +1,29 @@
 # Minimal Provider Agent Market
 
-A Python-based service that interacts with the [Agent Market](https://agent.market) platform to automatically scan for open instances, create proposals, and solve coding tasks using AI assistance.  [Agent Market](https://agent.market) is a two sided market for reward driven agents.
+A streamlined Python service for the [Agent Market](https://agent.market) platform that automates proposal creation and provides AI-powered code review suggestions. This simplified version focuses on core market interaction functionality while maintaining high reliability and ease of maintenance.
 ## Overview
 
-This service consists of two main components:
-- Market Scanner: Monitors the [Agent Market](https://agent.market) for open instances and creates proposals
-- Instance Solver: Processes awarded proposals by cloning repositories, making necessary changes, and submitting pull requests
+This service provides a streamlined interface to the [Agent Market](https://agent.market) platform through two core handlers:
+- `market_scan_handler`: Continuously monitors the market for open instances and automatically creates proposals within specified bid limits
+- `solve_instances_handler`: Processes awarded proposals by providing AI-powered code review suggestions
+
+The codebase has been simplified to focus on these essential functions, removing auxiliary features like CLI interfaces and caching mechanisms to improve maintainability.
 
 ## Features
 
-- Automatic market scanning and proposal creation
-- AI-powered code modifications using Aider
-- GitHub integration for repository forking and pull request creation
-- Docker containerization for isolated execution
+- Automatic market scanning and proposal creation through `market_scan_handler`
+- AI-powered code review and suggestions through `solve_instances_handler`
+- Integration with Agent Market API
 - Configurable bid amounts and API settings
+
+Note: This is a simplified version that focuses on core market scanning and instance solving functionality. The CLI interface and some auxiliary features have been removed to streamline the codebase.
 
 ## Prerequisites
 
-- Python 3.8+
-- Docker
-- OpenAI API key
+- Python 3.10+
+- OpenAI API key (for AI-powered code review)
 - Agent Market API key
-- GitHub Personal Access Token
+- GitHub credentials (username, email, and PAT)
 
 ## Installation
 
@@ -31,86 +33,79 @@ git clone https://github.com/yourusername/minimal-provider-agent-market.git
 cd minimal-provider-agent-market
 ```
 
-2. Install dependencies:
+2. Install dependencies using Poetry:
 ```bash
-pip install -r requirements.txt
+pip install poetry
+poetry install
 ```
 
-3. Create a `.env` file from the template:
+3. Configure your environment variables:
 ```bash
-cp .env.template .env
-```
+# Required environment variables
+export OPENAI_API_KEY=your_openai_api_key
+export MARKET_API_KEY=your_market_api_key
+export GITHUB_PAT=your_github_pat
+export GITHUB_USERNAME=your_github_username
+export GITHUB_EMAIL=your_github_email
 
-4. Configure your environment variables in `.env`:
-```
-PROJECT_NAME=minimal-provider-agent-market
-FOUNDATION_MODEL_NAME=gpt-4o
-OPENAI_API_KEY=your_openai_api_key
-MARKET_API_KEY=your_market_api_key
-GITHUB_PAT=your_github_pat
-MAX_BID=0.01
-GITHUB_USERNAME=your_github_username
-GITHUB_EMAIL=your_github_email
+# Optional configuration (with defaults)
+export MAX_BID=0.01  # Maximum bid amount for proposals
+export MARKET_URL=https://api.agent.market
 ```
 
 ## Running the Service
 
-### Using Docker (Recommended)
+The service runs both the market scanner and instance solver in parallel:
 
-1. Build the Docker image:
-```bash
-docker build -t minimal-provider-agent .
-```
-
-2. Run the market scanner:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.market_scan
-```
-
-3. Run the instance solver:
-```bash
-docker run --env-file .env minimal-provider-agent python -m src.solve_instances
-```
-
-### Running Locally
-
-Run the main application which includes both market scanning and instance solving:
 ```bash
 python main.py
 ```
+
+This will start:
+1. `market_scan_handler`: Continuously monitors the market for open instances and creates proposals
+2. `solve_instances_handler`: Processes awarded proposals and provides AI-powered code review suggestions
+
+Each component runs in its own process and will automatically retry on failures.
 
 ## Project Structure
 
 ```
 ├── src/
-│   ├── aider_solver/      # AI-powered code modification
-│   ├── utils/             # Utility functions
-│   ├── market_scan.py     # Market scanning functionality
-│   ├── solve_instances.py # Instance solving logic
+│   ├── agents/           # AI agent implementations
+│   ├── utils/            # Utility functions
+│   ├── market_scan.py    # Market scanning functionality
+│   ├── solve_instances.py# Instance solving logic
 │   ├── config.py         # Configuration settings
-│   └── enums.py          # Enumerations
-├── requirements.txt      # Python dependencies
-├── .env.template        # Environment variables template
-└── README.md           # This file
+│   └── enums.py         # Enumerations
+├── main.py             # Main application entry point
+├── pyproject.toml      # Project dependencies and settings
+└── README.md          # Documentation
 ```
+
+Note: The codebase has been streamlined to focus on the core functionality provided by `market_scan_handler` and `solve_instances_handler`. Some auxiliary components have been removed for simplicity.
 
 ## Configuration
 
-The service can be configured through environment variables in the `.env` file:
+The service uses the following environment variables:
 
-- `FOUNDATION_MODEL_NAME`: The AI model to use (default: gpt-4o)
+Required:
+- `OPENAI_API_KEY`: Your OpenAI API key for code review functionality
+- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
+- `GITHUB_PAT`: GitHub Personal Access Token
+- `GITHUB_USERNAME`: Your GitHub username
+- `GITHUB_EMAIL`: Your GitHub email
+
+Optional:
 - `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
 - `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
-- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
+- `AGENT_TYPE`: Type of agent to use (default: "open-hands")
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+The service uses two main handlers:
+1. `market_scan_handler`: Monitors the market and creates proposals
+2. `solve_instances_handler`: Processes awarded proposals with AI assistance
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+Fixes #14

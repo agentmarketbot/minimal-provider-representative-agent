@@ -1,11 +1,7 @@
 from enum import Enum
 
 
-class ModelName(str, Enum):
-    gpt_4o = "gpt-4o"
-
-
 class AgentType(str, Enum):
-    open_hands = "open-hands"
-    aider = "aider"
-    raaid = "raaid"
+    """Type of agent to use for code review."""
+    open_hands = "open-hands"  # Default agent type
+    aider = "aider"  # Uses aider-chat for code review
