@@ -33,15 +33,6 @@ class Settings(BaseSettings):
 
     @classmethod
     def load_settings(cls) -> "Settings":
-        aws_execution_env = os.getenv("AWS_EXECUTION_ENV")
-        if aws_execution_env:
-            secret_arn = os.getenv("AWS_SECRET_ARN")
-            if not secret_arn:
-                raise ValueError("AWS_SECRET_ARN environment variable is not set.")
-
-            secret_data = cls.fetch_secret(secret_arn)
-            os.environ.update(secret_data)
-
         return cls()
 
 

@@ -482,25 +482,4 @@ def _build_solver_command_from_chat(background: str, user_messages: str) -> str:
     return result
 
 
-def add_aider_logs_as_pr_comments(pr_url: str, github_token: str, logs: str) -> None:
-    g = github.Github(github_token)
 
-    pr_path = pr_url.split("github.com/")[-1]
-    owner_repo, pr_number = pr_path.split("/pull/")
-    pr_number = int(pr_number)
-
-    repo = g.get_repo(owner_repo)
-    pr = repo.get_pull(pr_number)
-
-    comment = f"## Aider:\n{logs}\n"
-
-    pr.create_issue_comment(comment)
-    logger.info("Successfully added logs as PR comment")
-
-
-def get_pr_url(chat_text: str) -> Optional[str]:
-    pr_url_pattern = r"https://github\.com/[^/]+/[^/]+/pull/\d+"
-    match = re.search(pr_url_pattern, chat_text)
-    if match:
-        return match.group(0)
-    return None
