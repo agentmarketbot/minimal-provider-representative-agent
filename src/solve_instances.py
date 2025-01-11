@@ -76,12 +76,15 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
     Focus on code changes, implementation details, and technical suggestions. 
     Exclude any git-related suggestions (like splitting PRs, improving commit messages, or branch management).
     Format the technical items in a clear, concise manner while maintaining their accuracy.
+    
+    Important: You are the requester in this conversation. Do not repeat information that you've already 
+    mentioned in previous messages, only provide new technical suggestions.
 
     If there are no new relevant technical suggestions to add that haven't been mentioned before, 
     respond with exactly 'NO_RESPONSE_NEEDED'. Otherwise, list only the new technical improvements.
 
     Previous conversation:
-    {history}\n\n
+    {history}
 
     Current response to analyze:
     {feedback}
@@ -91,15 +94,6 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
         cleaned = openai.chat.completions.create(
             model="o1-mini",
             messages=[
-                {
-                    "role": "user",
-                    "content": (
-                        "You are a technical assistant that extracts and organizes key "
-                        "improvements from code reviews. If there are no new relevant technical "
-                        "suggestions to add, respond with NO_RESPONSE_NEEDED. Otherwise, ensure "
-                        "suggestions are not repeated from previous conversations."
-                    ),
-                },
                 {
                     "role": "user",
                     "content": prompt.format(
@@ -118,38 +112,13 @@ def _clean_response(response: str, conversation_history: str = None) -> str:
         return response
 
 
-def _get_pr_diff(pr_url: str) -> Optional[str]:
-    try:
-        diff_url = f"{pr_url}.diff"
-        response = httpx.get(diff_url, timeout=TIMEOUT)
-        if response.status_code == 200:
-            diff_content = response.text
-            diff_files = openai.chat.completions.create(
-                model=ModelName.gpt_4o,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a technical assistant that processes PR diffs. Extract and list all modified files and their changes in a structured format. For each file include: filename and the actual changes made (additions/deletions). Do not summarize or interpret the changes."
-                    },
-                    {
-                        "role": "user",
-                        "content": f"Extract the modified files and their changes from this diff:\n\n{diff_content}"
-                    }
-                ]
-            )
-            return diff_files.choices[0].message.content.strip()
-    except Exception as e:
-        logger.warning(f"Failed to fetch PR diff: {e}")
-    return None
-
-
 def _solve_instance(
     instance_to_solve: InstanceToSolve,
 ) -> str:
     logger.info("Solving instance id: {}", instance_to_solve.instance["id"])
 
     system_prompt = (
-        "You are a code reviewer examining this PR and conversation history. "
+        "You are a code reviewer examining this PR."
         "If there are questions to answer or PR changes to request, provide a response. "
         "Otherwise, reply with 'NO_RESPONSE_NEEDED'. Be thorough but constructive in your review."
     )
