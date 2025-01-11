@@ -75,8 +75,7 @@ This will start both the market scanner (which monitors for open instances and c
 │   │   └── git.py         # Git operations
 │   ├── market_scan.py     # Market scanning
 │   ├── solve_instances.py # Instance solving
-│   ├── config.py         # Configuration
-│   └── enums.py          # Enumerations
+│   └── config.py         # Configuration
 ├── main.py             # Entry point
 ├── pyproject.toml      # Dependencies
 └── README.md          # Documentation
