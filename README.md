@@ -1,157 +1,197 @@
 # Minimal Provider Agent Market
 
-A streamlined Python service for the [Agent Market](https://agent.market) platform that automates proposal creation and provides AI-powered code review suggestions. This simplified version focuses on core market interaction functionality while maintaining high reliability and ease of maintenance.
+A streamlined Python service for the [Agent Market](https://agent.market) platform that focuses exclusively on two core functions:
+1. `market_scan_handler`: Automated proposal creation for open market instances
+2. `solve_instances_handler`: AI-powered code review suggestions for awarded proposals
+
+This repository has been simplified to retain only the code directly utilized by these two handlers, ensuring a focused and maintainable codebase.
 ## Overview
 
-This service provides a streamlined interface to the [Agent Market](https://agent.market) platform through two core handlers:
-- `market_scan_handler`: Continuously monitors the market for open instances and automatically creates proposals within specified bid limits
-- `solve_instances_handler`: Processes awarded proposals by providing AI-powered code review suggestions
+The codebase has been simplified to focus on two essential handlers that interact with the [Agent Market](https://agent.market) platform:
 
-The codebase has been simplified to focus on these essential functions, removing auxiliary features like CLI interfaces and caching mechanisms to improve maintainability.
+1. **Market Scan Handler** (`src/market_scan.py`)
+   - Monitors open instances using asynchronous API calls
+   - Creates proposals automatically within configured bid limits
+   - Implements rate limiting and error handling for API stability
 
-## Features
+2. **Instance Solver** (`src/solve_instances.py`)
+   - Processes awarded proposals using OpenAI's API
+   - Generates technical code review suggestions
+   - Manages chat interactions with instance providers
 
-- Automatic market scanning and proposal creation through `market_scan_handler`
-- AI-powered code review and suggestions through `solve_instances_handler`
-- Integration with Agent Market API
-- Configurable bid amounts and API settings
+All auxiliary features (CLI interface, repository cloning, caching) have been removed to maintain a focused and efficient codebase.
 
-Note: This is a simplified version that focuses on core market scanning and instance solving functionality. The following features have been removed to streamline the codebase:
+## Core Features
 
-1. **CLI Interface Removed**: The application now runs as a service only, removing the command-line interface to simplify usage and maintenance.
-2. **Repository Cloning Removed**: Direct repository operations have been removed, focusing on API-based interactions.
-3. **Caching Mechanism Removed**: Responses are now generated on-demand for better consistency, though with slightly higher latency.
+1. **Market Scanning** (`market_scan_handler`)
+   - Asynchronous monitoring of open market instances
+   - Automatic proposal creation with configurable bid limits
+   - Built-in rate limiting and error handling
+   - Efficient API communication using httpx
 
-## Performance Considerations
+2. **Instance Solving** (`solve_instances_handler`)
+   - AI-powered code review using OpenAI's API
+   - Intelligent message handling for provider interactions
+   - Automatic PR and issue link detection
+   - Response cleaning and deduplication
 
-- Without caching, each instance review requires a new API call
-- The application uses asynchronous operations for market scanning
-- Rate limiting is implemented to prevent API throttling
+3. **Configuration**
+   - Environment-based configuration using pydantic
+   - Flexible API endpoint configuration
+   - Customizable bid limits and market status codes
+   - Comprehensive error logging with loguru
 
-## Prerequisites
+Note: To maintain a focused codebase, the following features have been removed:
+- Command-line interface (CLI)
+- Repository cloning functionality
+- Response caching system
 
-- Python 3.10+
-- OpenAI API key (for AI-powered code review)
-- Agent Market API key
+## Performance Characteristics
+
+1. **API Interactions**
+   - Market scanning uses asynchronous operations for efficient API polling
+   - Instance solving generates fresh responses for each review (no caching)
+   - Built-in rate limiting prevents API throttling
+
+2. **Resource Usage**
+   - Minimal disk I/O (no repository cloning or caching)
+   - Efficient memory usage with on-demand response generation
+   - Two separate processes for market scanning and instance solving
+
+3. **Scalability**
+   - Configurable polling intervals for market scanning
+   - Independent handler processes can be scaled separately
+   - Stateless operation enables easy horizontal scaling
+
+## Requirements
+
+### Prerequisites
+- Python 3.11
+- OpenAI API key (for code review generation)
+- Agent Market API key (for market interaction)
 
 ### Core Dependencies
+- `httpx`: Async-capable HTTP client for market API communication
+- `openai`: OpenAI API client for code review generation
+- `pydantic`: Settings management and validation
+- `loguru`: Structured logging
+- `python-dotenv`: Environment variable management
+- `pydantic-settings`: Settings management with Pydantic
 
-- `httpx`: For API communication with Agent Market
-- `openai`: For AI-powered code review
-- `loguru`: For structured logging
-- `pydantic`: For settings management and validation
+Note: All other dependencies have been removed as part of the codebase simplification.
 
-## Installation
+## Setup and Running
 
-1. Clone the repository:
+### Installation
+
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/minimal-provider-agent-market.git
 cd minimal-provider-agent-market
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-2. Install dependencies using Poetry:
+### Configuration
+
+Create a `.env` file in the project root:
 ```bash
-pip install poetry
-poetry install
+# Required settings
+OPENAI_API_KEY=your_openai_api_key
+MARKET_API_KEY=your_market_api_key
+
+# Optional settings (defaults shown)
+MARKET_URL=https://api.agent.market
+MAX_BID=0.01
 ```
 
-3. Configure your environment variables:
-```bash
-# Required environment variables
-export OPENAI_API_KEY=your_openai_api_key
-export MARKET_API_KEY=your_market_api_key
-
-# Optional configuration (with defaults)
-export MAX_BID=0.01  # Maximum bid amount for proposals
-export MARKET_URL=https://api.agent.market
-```
-
-## Running the Service
-
-The service runs both the market scanner and instance solver in parallel:
+### Running the Service
 
 ```bash
 python main.py
 ```
 
-This will start:
-1. `market_scan_handler`: Continuously monitors the market for open instances and creates proposals
-2. `solve_instances_handler`: Processes awarded proposals and provides AI-powered code review suggestions
+This starts two parallel processes:
+1. Market Scanner: Monitors open instances and creates proposals
+2. Instance Solver: Processes awarded proposals with AI code review
 
-Each component runs in its own process and will automatically retry on failures.
+Both processes:
+- Run independently in separate processes
+- Include automatic error recovery
+- Log operations using loguru
+- Respect API rate limits
 
 ## Project Structure
 
 ```
 ├── src/
-│   ├── agents/           # AI agent implementation
-│   │   └── code_review.py     # Code review using OpenAI API
-│   ├── market_scan.py    # Market scanning and proposal creation
-│   ├── solve_instances.py# Instance solving and code review logic
-│   ├── config.py         # Environment and application settings
-│   └── enums.py         # Removed - status codes moved to config.py
-├── main.py             # Service entry point (runs both handlers)
-├── pyproject.toml      # Project dependencies and settings
-└── README.md          # Documentation
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   └── code_review.py    # OpenAI-powered code review
+│   ├── __init__.py
+│   ├── market_scan.py        # Market monitoring and proposal creation
+│   ├── solve_instances.py    # Instance solving and review generation
+│   └── config.py            # Settings and configuration
+├── main.py                  # Service entry point
+├── pyproject.toml           # Project metadata and dependencies
+└── README.md               # Documentation
 ```
 
-Core Components:
-1. `market_scan.py`: Handles market monitoring and proposal creation
-   - Scans for open instances
-   - Creates proposals for new instances
-   - Uses rate limiting for API stability
+### Core Components
 
-2. `solve_instances.py`: Manages instance solving workflow
-   - Processes awarded proposals
-   - Integrates with OpenAI for code review
-   - Handles chat interactions with providers
+1. **Entry Point** (`main.py`)
+   - Runs market scanner and instance solver in parallel processes
+   - Handles process lifecycle and error recovery
+   - Coordinates service shutdown
 
-3. `code_review.py`: Provides AI-powered code review
-   - Simplified integration with OpenAI API
-   - Generates focused technical suggestions
-   - Streamlined for efficient code review generation
+2. **Market Scanner** (`src/market_scan.py`)
+   - Asynchronous market monitoring
+   - Proposal creation for open instances
+   - Rate-limited API interactions
 
-## Configuration
+3. **Instance Solver** (`src/solve_instances.py`)
+   - Awarded proposal processing
+   - Chat message handling
+   - Integration with code review
 
-The service uses the following environment variables:
+4. **Code Review** (`src/agents/code_review.py`)
+   - OpenAI API integration
+   - Technical suggestion generation
+   - Response formatting
 
-Required:
-- `OPENAI_API_KEY`: Your OpenAI API key for code review functionality
-- `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
+5. **Configuration** (`src/config.py`)
+   - Environment variable handling
+   - Settings validation
+   - Market status codes
 
-Optional:
-- `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
-- `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
+## Breaking Changes
 
-The service uses two main handlers:
-1. `market_scan_handler`: Monitors the market and creates proposals
-2. `solve_instances_handler`: Processes awarded proposals with AI assistance
+This version introduces significant changes to simplify the codebase:
 
-## Breaking Changes and Migration Guide
+### 1. Removed Features
+- CLI interface (use `python main.py` instead)
+- Repository cloning functionality
+- Response caching system
+- All non-essential dependencies
 
-### Removed Features
+### 2. Architecture Changes
+- Focused on two core handlers
+- Stateless operation
+- Process-based parallelism
+- Direct API interactions only
 
-1. **CLI Interface**
-   - Impact: Command-line operations are no longer available
-   - Migration: Use the service mode by running `python main.py`
-   - Rationale: Simplifies codebase and reduces maintenance overhead
+### 3. Performance Impact
+- Fresh responses for each review
+- Increased API usage
+- Reduced resource footprint
+- Improved error handling
 
-2. **Repository Cloning**
-   - Impact: Direct repository operations have been removed
-   - Migration: Code review now operates via API interactions only
-   - Rationale: Reduces complexity and potential security risks
-
-3. **Caching Mechanism**
-   - Impact: Each request generates fresh responses
-   - Migration: No action needed; responses are now generated on-demand
-   - Rationale: Ensures consistency and reduces state management complexity
-
-### Performance Impact
-
-- **Response Time**: Slightly increased due to removal of caching
-- **Resource Usage**: Reduced due to removal of repository cloning
-- **API Usage**: Increased due to on-demand response generation
-- **Reliability**: Improved through simplified architecture
+### 4. Migration Notes
+- Update to environment-based configuration
+- Remove any CLI-based automation
+- Expect slightly higher latency
+- Monitor API usage more closely
 
 ## License
 
