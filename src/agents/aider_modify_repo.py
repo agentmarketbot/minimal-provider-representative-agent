@@ -1,4 +1,3 @@
-import argparse
 import io
 import os
 import shutil
@@ -82,21 +81,4 @@ def modify_repo_with_aider(model_name, solver_command, repo_info=None) -> str:
             logger.error(f"Error cleaning up temporary directory {temp_dir}: {e}")
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Modify a repository with Aider.")
-    parser.add_argument(
-        "--model-name", type=str, required=True, help="The name of the model to use."
-    )
-    parser.add_argument(
-        "--solver-command",
-        type=str,
-        required=True,
-        help="The command to run the solver.",
-    )
-    args = parser.parse_args()
 
-    modify_repo_with_aider(args.model_name, args.solver_command)
-
-
-if __name__ == "__main__":
-    main()

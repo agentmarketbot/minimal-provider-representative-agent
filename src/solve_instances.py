@@ -11,7 +11,6 @@ from src.agents.aider_modify_repo import modify_repo_with_aider
 from src.config import SETTINGS, Settings
 
 TIMEOUT = httpx.Timeout(10.0)
-MODEL_NAME = "gpt-4o"
 
 openai.api_key = SETTINGS.openai_api_key
 
@@ -125,7 +124,7 @@ def _get_pr_diff(pr_url: str) -> Optional[str]:
         if response.status_code == 200:
             diff_content = response.text
             diff_files = openai.chat.completions.create(
-                model=MODEL_NAME,
+                model="gpt-4o",
                 messages=[
                     {
                         "role": "system",
@@ -198,7 +197,7 @@ def _solve_instance(
         solver_command += f"\nIssue: {issue_link.group(0)}"
 
     try:
-        response = modify_repo_with_aider(MODEL_NAME, solver_command, repo_info)
+        response = modify_repo_with_aider("gpt-4o", solver_command, repo_info)
         if not response:
             logger.warning("Received empty response from Aider")
             return None
