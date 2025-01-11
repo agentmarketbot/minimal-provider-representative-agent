@@ -1,2 +1,4 @@
-# This file is kept as a placeholder for future enums
-# Currently, no enums are needed as the codebase has been simplified
+"""
+This module has been removed as part of the codebase simplification.
+All status codes are now directly configured in config.py.
+"""

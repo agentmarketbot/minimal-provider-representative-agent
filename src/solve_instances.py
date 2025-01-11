@@ -6,7 +6,7 @@ import httpx
 import openai
 from loguru import logger
 
-from src.agents.aider_modify_repo import modify_repo_with_aider
+from src.agents.code_review import generate_code_review
 from src.config import SETTINGS, Settings
 
 TIMEOUT = httpx.Timeout(10.0)
@@ -176,7 +176,7 @@ def _solve_instance(instance_to_solve: InstanceToSolve) -> Optional[str]:
             review_command += f"\nRelated issue: {issue_url}"
 
         # Get AI response
-        response = modify_repo_with_aider(review_command)
+        response = generate_code_review(review_command)
         if not response:
             logger.warning("Empty response from AI")
             return None

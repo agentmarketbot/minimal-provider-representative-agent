@@ -1,15 +1,16 @@
-"""Module for code review functionality."""
+"""Module for code review functionality using OpenAI API.
+Simplified version that focuses only on generating code review suggestions."""
 
 from loguru import logger
 import openai
 
 
-def modify_repo_with_aider(review_command: str) -> str:
+def generate_code_review(review_command: str) -> str:
     """
-    Analyze code and provide review suggestions using OpenAI.
+    Generate code review suggestions using OpenAI API.
 
     Args:
-        review_command (str): The review instructions
+        review_command (str): The review instructions or context
 
     Returns:
         str: The review suggestions, or None if an error occurs

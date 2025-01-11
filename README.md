@@ -85,11 +85,11 @@ Each component runs in its own process and will automatically retry on failures.
 ```
 ├── src/
 │   ├── agents/           # AI agent implementation
-│   │   └── aider_modify_repo.py  # Code review using OpenAI
+│   │   └── code_review.py     # Code review using OpenAI API
 │   ├── market_scan.py    # Market scanning and proposal creation
 │   ├── solve_instances.py# Instance solving and code review logic
 │   ├── config.py         # Environment and application settings
-│   └── enums.py         # Placeholder for future enums
+│   └── enums.py         # Removed - status codes moved to config.py
 ├── main.py             # Service entry point (runs both handlers)
 ├── pyproject.toml      # Project dependencies and settings
 └── README.md          # Documentation
@@ -106,10 +106,10 @@ Core Components:
    - Integrates with OpenAI for code review
    - Handles chat interactions with providers
 
-3. `aider_modify_repo.py`: Provides AI-powered code review
-   - Integrates with OpenAI for suggestions
-   - Focuses on technical improvements
-   - Streamlined for efficient code analysis
+3. `code_review.py`: Provides AI-powered code review
+   - Simplified integration with OpenAI API
+   - Generates focused technical suggestions
+   - Streamlined for efficient code review generation
 
 ## Configuration
 
