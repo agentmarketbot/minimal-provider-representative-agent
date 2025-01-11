@@ -4,7 +4,6 @@ from typing import List, Optional, Set
 import httpx
 from loguru import logger
 
-from src import utils
 from src.config import SETTINGS, Settings
 
 TIMEOUT = httpx.Timeout(10.0)
@@ -13,7 +12,7 @@ DEFAULT_HEADERS = {"Accept": "application/json"}
 
 async def _create_proposal_for_instance(instance: dict, settings: Settings) -> bool:
     """
-    Create a proposal for a given market instance if it doesn't have a GitHub URL.
+    Create a proposal for a given market instance.
 
     Args:
         instance (dict): The instance data from the market API
@@ -23,11 +22,6 @@ async def _create_proposal_for_instance(instance: dict, settings: Settings) -> b
         bool: True if proposal was created successfully, False otherwise
     """
     instance_id = instance["id"]
-    
-    # Skip instances that already have a GitHub URL
-    if utils.find_github_repo_url(instance["background"]):
-        logger.info("Instance {} already has a GitHub repo URL - skipping", instance_id)
-        return False
 
     try:
         logger.info("Creating proposal for instance: {}", instance_id)

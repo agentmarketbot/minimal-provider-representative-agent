@@ -33,7 +33,6 @@ Note: This is a simplified version that focuses on core market scanning and inst
 - Python 3.10+
 - OpenAI API key (for AI-powered code review)
 - Agent Market API key
-- GitHub credentials (username, email, and PAT)
 
 ### Core Dependencies
 
@@ -41,7 +40,6 @@ Note: This is a simplified version that focuses on core market scanning and inst
 - `openai`: For AI-powered code review
 - `loguru`: For structured logging
 - `pydantic`: For settings management and validation
-- `aider-chat`: For code review suggestions
 
 ## Installation
 
@@ -62,9 +60,6 @@ poetry install
 # Required environment variables
 export OPENAI_API_KEY=your_openai_api_key
 export MARKET_API_KEY=your_market_api_key
-export GITHUB_PAT=your_github_pat
-export GITHUB_USERNAME=your_github_username
-export GITHUB_EMAIL=your_github_email
 
 # Optional configuration (with defaults)
 export MAX_BID=0.01  # Maximum bid amount for proposals
@@ -89,14 +84,12 @@ Each component runs in its own process and will automatically retry on failures.
 
 ```
 ├── src/
-│   ├── agents/           # AI agent implementation (aider integration)
-│   │   └── aider_modify_repo.py  # Code review using Aider
-│   ├── utils/            # Utility functions
-│   │   └── git.py        # GitHub URL parsing utilities
+│   ├── agents/           # AI agent implementation
+│   │   └── aider_modify_repo.py  # Code review using OpenAI
 │   ├── market_scan.py    # Market scanning and proposal creation
 │   ├── solve_instances.py# Instance solving and code review logic
 │   ├── config.py         # Environment and application settings
-│   └── enums.py         # Agent type enumerations
+│   └── enums.py         # Placeholder for future enums
 ├── main.py             # Service entry point (runs both handlers)
 ├── pyproject.toml      # Project dependencies and settings
 └── README.md          # Documentation
@@ -105,18 +98,18 @@ Each component runs in its own process and will automatically retry on failures.
 Core Components:
 1. `market_scan.py`: Handles market monitoring and proposal creation
    - Scans for open instances
-   - Creates proposals for instances without GitHub URLs
+   - Creates proposals for new instances
    - Uses rate limiting for API stability
 
 2. `solve_instances.py`: Manages instance solving workflow
    - Processes awarded proposals
-   - Integrates with Aider for code review
+   - Integrates with OpenAI for code review
    - Handles chat interactions with providers
 
 3. `aider_modify_repo.py`: Provides AI-powered code review
    - Integrates with OpenAI for suggestions
    - Focuses on technical improvements
-   - Maintains security by disabling shell commands
+   - Streamlined for efficient code analysis
 
 ## Configuration
 
@@ -125,14 +118,10 @@ The service uses the following environment variables:
 Required:
 - `OPENAI_API_KEY`: Your OpenAI API key for code review functionality
 - `MARKET_API_KEY`: Your Agent Market API key (get it from [agent.market](https://agent.market))
-- `GITHUB_PAT`: GitHub Personal Access Token
-- `GITHUB_USERNAME`: Your GitHub username
-- `GITHUB_EMAIL`: Your GitHub email
 
 Optional:
 - `MAX_BID`: Maximum bid amount for proposals (default: 0.01)
 - `MARKET_URL`: Agent Market API URL (default: https://api.agent.market)
-- `AGENT_TYPE`: Type of agent to use (default: "open-hands")
 
 The service uses two main handlers:
 1. `market_scan_handler`: Monitors the market and creates proposals

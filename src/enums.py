@@ -1,7 +1,2 @@
-from enum import Enum
-
-
-class AgentType(str, Enum):
-    """Type of agent to use for code review."""
-    open_hands = "open-hands"  # Default agent type
-    aider = "aider"  # Uses aider-chat for code review
+# This file is kept as a placeholder for future enums
+# Currently, no enums are needed as the codebase has been simplified
