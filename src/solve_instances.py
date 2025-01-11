@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional
+import re
 
 import httpx
 import openai
@@ -163,8 +164,6 @@ def _solve_instance(
     if instance_to_solve.messages_history:
         messages = instance_to_solve.messages_history
         if "github.com" in messages and "/pull/" in messages:
-            import re
-
             pr_link = re.search(r"https://github\.com/[^/]+/[^/]+/pull/\d+", messages)
             if pr_link:
                 pr_url = pr_link.group(0)

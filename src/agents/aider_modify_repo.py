@@ -2,18 +2,15 @@ import argparse
 import io
 import os
 import shutil
-import sys
 import tempfile
 from contextlib import redirect_stderr, redirect_stdout
-from pathlib import Path
 
 from aider.coders import Coder
 from aider.io import InputOutput
 from aider.models import Model
-from aider.repo import GitRepo
 from loguru import logger
 
-from src.utils.git import clone_repository, find_github_repo_url
+from src.utils.git import clone_repository
 
 from .prompt_cache import PromptCache
 
